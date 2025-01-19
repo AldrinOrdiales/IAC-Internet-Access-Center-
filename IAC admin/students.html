@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel = "icon" href = "assets/images/logo.png">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="assets/css/sidebar-header.css">
+  <link rel="stylesheet" href="assets/css/page-content.css">
+  <link rel="stylesheet" href="assets/css/history.css">
+  
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row flex-nowrap">
+      <div class="col-auto p-0 bg-dark" id="sidebar">
+        <div class="d-flex flex-column align-items-center align-items-sm-start text-white min-vh-100">
+          <div class="logo-container">
+            <img src="assets/images/logo.png" alt="Logo" class="logo">
+            <a href="dashboard.html"
+              class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none admin-title">
+              <span class="fs-5">Menu</span>
+            </a>
+          </div>
+          <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+            <li>
+              <a href="dashboard.html" class="nav-link px-0 align-middle text-white">
+                <h8><i class="fas fa-tachometer-alt icon-size"></i> <span class="ms-1">Dashboard</span></h8>
+              </a>
+            </li>
+            <li>
+              <a href="computers.html" class="nav-link px-0 align-middle text-white">
+                <h8><i class="fas fa-desktop-alt icon-size"></i> <span class="ms-1">Computers</span></h8>
+              </a>
+            </li>
+            <li>
+              <a href="history.html" class="nav-link px-0 align-middle text-white">
+                <h8><i class="fas fa-clock icon-size"></i> <span class="ms-1">History</span></h8>
+              </a>
+            </li>
+            <li>
+              <a href="students.html" class="nav-link px-0 align-middle text-white">
+                <h8><i class="fas fa-users icon-size"></i> <span class="ms-1">Student</span></h8>
+              </a>
+            </li>
+
+          </ul>
+        </div>
+      </div>
+      <div class="col p-0">
+        <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+          <div class="container-fluid">
+            <button type="button" id="sidebarCollapse" class="btn btn-info">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand" href="admin_profile.php">
+              <div class="header-right">
+                <a href="#">
+                  <i class="fas fa-user"></i>
+
+                  <span class="account-name" id="account-name">Username</span>
+                </a>
+                <i class="fas fa-chevron-down"></i>
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu">
+                  <li>
+                    <a class="dropdown-item profile" href="admin_profile.php">Profile</a>
+                  </li>
+                  <li>
+                    <a class="dropdown-item logout" href="#" onclick="confirmLogout()">Log Out</a>
+                  </li>
+                </ul>
+              </div>
+            </a>
+          </div>
+        </nav>
+        <div class="container-fluid page-content mt-3">
+          <div class="table-container mt-4 mx-auto" style="max-width: 95%; min-width: 600px;">
+            <div class="table-header d-flex justify-content-between align-items-center">
+              <h4>Students</h4>
+              <div class="search-container">
+                <input type="text" class="form-control" id="searchInput" placeholder="Search..."
+                  onkeyup="searchTable()">
+                <span class="search-icon"><i class="fas fa-search"></i></span>
+              </div>
+            </div>
+            <table class="table table-striped table-hover" id="studentsTable" style="width: 100%;">
+              <thead>
+                <tr>
+                  <th scope="col">Student ID</th>
+                  <th scope="col">Student Name</th>
+                  <th scope="col">Year Level</th>
+                  <th scope="col">Course</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="tableBody">
+                <!-- Table rows will be dynamically populated -->
+              </tbody>
+            </table>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <select id="rowsPerPage" class="form-select form-select-sm w-auto" onchange="updatePagination()">
+                  <option value="5">5 rows</option>
+                  <option value="10" selected>10 rows</option>
+                  <option value="15">15 rows</option>
+                  <option value="20">20 rows</option>
+                </select>
+              </div>
+              <nav>
+                <ul class="pagination mb-0">
+                  <li class="page-item" id="prevPage">
+                    <a class="page-link" href="#" onclick="changePage(-1)">Previous</a>
+                  </li>
+                  <li class="page-item disabled" id="pageInfo">
+                    <span class="page-link" id="currentPageDisplay">Page 1 of 1</span>
+                  </li>
+                  <li class="page-item" id="nextPage">
+                    <a class="page-link" href="#" onclick="changePage(1)">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header" style="color: white; background-color: maroon;">
+          <h5 class="modal-title" id="editStudentModalLabel">Edit Student</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editStudentForm">
+            <input type="hidden" id="editStudentId" name="editStudentId">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="editFirstName" class="form-label">First Name</label>
+                <input type="text" class="form-control" id="editFirstName" name="editFirstName" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="editLastName" class="form-label">Last Name</label>
+                <input type="text" class="form-control" id="editLastName" name="editLastName" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="editYearLevel" class="form-label">Year Level</label>
+              <select class="form-select" id="editYearLevel" name="editYearLevel" required>
+                <option value="1st Year">1st Year</option>
+                <option value="2nd Year">2nd Year</option>
+                <option value="3rd Year">3rd Year</option>
+                <option value="4th Year">4th Year</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="editCourse" class="form-label">Course</label>
+              <select class="form-select" id="editCourse" name="editCourse" required>
+                <option value="BS in Nursing">BS in Nursing</option>
+                <option value="BS in Accountancy">BS in Accountancy</option>
+                <option value="BS in Hospitality Management">BS in Hospitality Management</option>
+                <option value="BS in Tourism Management">BS in Tourism Management</option>
+                <option value="BS in Computer Science">BS in Computer Science</option>
+                <option value="BA in Pyschology">BA in Pyschology</option>
+                <option value="BS in Computer Engineering">BS in Computer Engineering</option>
+                <option value="BS in Business Administration">BS in Business Administration</option>
+                <option value="B of Elementary Education">B of Elementary Education</option>
+                <option value="B of Secondary Education">B of Secondary Education</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="editPassword" class="form-label">Password</label>
+              <div class="input-group">
+                <input type="password" class="form-control" id="editPassword" name="editPassword">
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" style="background-color: maroon !important;"
+            id = "editbutton">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add this modal in the same location as the edit student modal -->
+  <div class="modal fade" id="deleteStudentModal" tabindex="-1" aria-labelledby="deleteStudentModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-danger text-white" style="background-color: maroon !important;">
+          <h5 class="modal-title" id="deleteStudentModalLabel">Confirm Delete</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p>Are you sure you want to delete this student </p>
+          <input type="hidden" id="deleteStudentId">
+          <p class="text-muted small">This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-danger" style="background-color: maroon !important;"
+            onclick="confirmDeleteStudent()">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/js/students_fetch.js"></script>
+  <script src="assets/js/sidebar.js"></script>
+  <script src="assets/js/header.js"></script>
+  <script>
+    function confirmLogout() {
+      // Ask for confirmation before proceeding with logout
+      var confirmation = confirm("Are you sure you want to log out?");
+      if (confirmation) {
+        // Clear localStorage to invalidate the session
+        localStorage.removeItem('token');
+        localStorage.removeItem('adminId');
+
+        // Notify the server about the logout and redirect to login page
+        fetch('?ajax_logout=true')
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === 'success') {
+              // Redirect to login page
+              window.location.href = '../login.html?logout_success=1';
+            } else {
+              // Fallback redirect if server response isn't successful
+              window.location.href = '../login.html';
+            }
+          })
+          .catch(error => {
+            console.error('Logout error:', error);
+            // Fallback redirect on error
+            window.location.href = '../login.html';
+          });
+      }
+    };
+
+    // Add token validation on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Redirect to login page if no token exists
+        window.location.href = '../login.html';
+      }
+      });
+
+    // DOM ready handler
+    document.addEventListener('DOMContentLoaded', function () {
+      const headerRight = document.querySelector('.header-right');
+      const dropdownMenu = document.querySelector('.dropdown-menu');
+
+      headerRight.addEventListener('click', function (e) {
+        e.preventDefault(); // Prevent default anchor behavior
+        dropdownMenu.classList.toggle('show');
+      });
+
+      // Close the dropdown when clicking outside
+      window.addEventListener('click', function (e) {
+        if (!headerRight.contains(e.target)) {
+          dropdownMenu.classList.remove('show');
+        }
+      });
+
+      // Handle dropdown links
+      const dropdownLinks = dropdownMenu.querySelectorAll('a');
+      dropdownLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+          e.stopPropagation(); // Prevent event bubbling
+        });
+      });
+    });
+  </script>
+  
+  <script>
+    let studentsData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    let rowsPerPage = 10;
+
+    async function fetchStudents() {
+
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('http://127.0.0.1:4000/admin/view-all-students', {
+
+          method: 'GET',
+          headers: {
+
+            'Authorization': token
+
+          }
+
+        });
+        if (!response.ok) {
+          throw new Error('Failed to fetch students');
+        }
+        studentsData = await response.json();
+        filteredData = studentsData;
+        renderTable();
+      } catch (error) {
+        console.error(error.message);
+      }
+    }
+
+    function renderTable() {
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = '';
+
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const pageData = filteredData.slice(start, end);
+
+      pageData.forEach(student => {
+        const row = `
+          <tr>
+            <td>${student.Student_ID}</td>
+            <td>${student.full_name}</td>
+            <td>${student.year_level}</td>
+            <td>${student.course}</td>
+            <td>
+              <button class="btn btn-sm btn-primary me-1" onclick="editStudent('${student.Student_ID}')">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger" onclick="deleteStudent('${student.Student_ID}')">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+
+      updatePaginationControls();
+    }
+
+    function searchTable() {
+      const input = document.getElementById('searchInput').value.toUpperCase();
+      filteredData = studentsData.filter(student =>
+        Object.values(student).some(value =>
+          value.toString().toUpperCase().includes(input)
+        )
+      );
+      currentPage = 1;
+      renderTable();
+    }
+
+    function updatePaginationControls() {
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      document.getElementById('currentPageDisplay').textContent = `Page ${currentPage} of ${totalPages}`;
+      document.getElementById('prevPage').classList.toggle('disabled', currentPage === 1);
+      document.getElementById('nextPage').classList.toggle('disabled', currentPage === totalPages);
+    }
+
+    function changePage(delta) {
+      const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+      currentPage = Math.max(1, Math.min(totalPages, currentPage + delta));
+      renderTable();
+    }
+
+    function updatePagination() {
+      rowsPerPage = parseInt(document.getElementById('rowsPerPage').value);
+      currentPage = 1;
+      renderTable();
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchStudents);
+  </script>
+  <script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function () {
+      const passwordInput = document.getElementById('editPassword');
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+
+      // Toggle eye icon
+      this.querySelector('i').classList.toggle('fa-eye');
+      this.querySelector('i').classList.toggle('fa-eye-slash');
+    });
+
+    // Function to open edit modal
+    
+  </script>
+  
+</body>
+
+</html>
